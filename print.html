@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>استمارة الإرشاد التربوي</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; }
+    body { background: #eef2f6; color: #000; }
+    .control-panel { background: #1a2b4c; color: #fff; padding: 16px 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+    .panel-header { max-width: 900px; margin: 0 auto 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+    .panel-header h1 { font-size: 1.15rem; color: #c5a059; }
+    .filters-bar { max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
+    .filters-bar input, .filters-bar select { padding: 9px 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); font-size: 0.9rem; background: #fff; color: #1e293b; }
+    .action-bar { max-width: 210mm; margin: 14px auto 8px; display: flex; justify-content: space-between; align-items: center; padding: 0 4px; }
+    .btn-print { background: #c5a059; color: #1a2b4c; border: none; padding: 10px 22px; border-radius: 6px; font-size: 0.95rem; font-weight: 800; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+    .btn-refresh { background: #fff; color: #1a2b4c; border: 1px solid #1a2b4c; padding: 8px 14px; border-radius: 6px; font-weight: 700; cursor: pointer; }
+    .a4-wrapper { display: flex; justify-content: center; padding: 5px 10px 40px; }
+    .a4-page { width: 210mm; min-height: 297mm; background: #fff; padding: 15mm 15mm; box-shadow: 0 8px 25px rgba(0,0,0,0.15); position: relative; }
+    .page-border { border: 1.5px solid #000; padding: 22px 24px; min-height: 265mm; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
+    .photo-box { position: absolute; top: 22px; left: 24px; width: 28mm; height: 35mm; border: 1.2px solid #000; display: flex; align-items: center; justify-content: center; background: #fff; font-size: 0.8rem; color: #333; text-align: center; overflow: hidden; }
+    .photo-box img { width: 100%; height: 100%; object-fit: cover; }
+    .form-content { margin-top: 5px; }
+    .form-row { display: flex; align-items: baseline; margin-bottom: 20px; font-size: 1.05rem; font-weight: 700; color: #000; line-height: 1.8; }
+    .form-row .label-title { min-width: 220px; }
+    .form-row .label-value { flex-grow: 1; border-bottom: 1px dotted #000; padding-right: 8px; font-weight: 600; color: #111; min-height: 24px; }
+    .loss-container { margin-bottom: 20px; }
+    .loss-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; }
+    .loss-options-grid { display: flex; align-items: center; gap: 35px; padding-right: 10px; }
+    .loss-opt-item { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 1rem; }
+    .check-box { width: 18px; height: 18px; border: 1.5px solid #000; display: inline-flex; align-items: center; justify-content: center; font-size: 0.95rem; font-weight: 900; }
+    .behavior-section { margin-top: 8px; }
+    .behavior-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 6px; }
+    .behavior-textarea { width: 100%; min-height: 85px; border: none; resize: none; font-size: 1rem; font-family: 'Tajawal', sans-serif; line-height: 1.7; color: #000; background: transparent; }
+    .behavior-textarea:focus { outline: none; }
+    @media print {
+      @page { size: A4 portrait; margin: 0; }
+      body { background: #fff; margin: 0; padding: 0; }
+      .control-panel, .action-bar { display: none !important; }
+      .a4-wrapper { padding: 0; margin: 0; }
+      .a4-page { box-shadow: none; border: none; width: 210mm; height: 297mm; padding: 12mm 12mm; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="control-panel">
+    <div class="panel-header">
+      <h1>لوحة طباعة الاستمارة</h1>
+      <span id="statusBadge" style="font-size: 0.8rem; background: rgba(255,255,255,0.15); padding: 3px 10px; border-radius: 20px;">جاري التحميل...</span>
+    </div>
+    <div class="filters-bar">
+      <input type="text" id="searchInput" placeholder="ابحث باسم الطالبة..." oninput="filterStudents()" />
+      <select id="filterDept" onchange="filterStudents()">
+        <option value="">جميع الأقسام</option>
+        <option value="تجاري">تجاري</option>
+        <option value="حاسوب وتقنية معلومات">حاسوب وتقنية معلومات</option>
+        <option value="أجهزة طبية">أجهزة طبية</option>
+        <option value="أمن سيبراني">أمن سيبراني</option>
+        <option value="فنون">فنون</option>
+      </select>
+      <select id="filterStage" onchange="filterStudents()">
+        <option value="">جميع المراحل</option>
+        <option value="الأولى">الأولى</option>
+        <option value="الثانية">الثانية</option>
+        <option value="الثالثة">الثالثة</option>
+      </select>
+      <select id="filterSection" onchange="filterStudents()">
+        <option value="">جميع الشعب</option>
+        <option value="أ">أ</option>
+        <option value="ب">ب</option>
+        <option value="ج">ج</option>
+        <option value="د">د</option>
+      </select>
+      <select id="studentSelect" onchange="renderSelectedStudent()">
+        <option value="">-- اختر الطالبة --</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="action-bar">
+    <button class="btn-refresh" onclick="fetchStudents()">تحديث القائمة</button>
+    <button class="btn-print" onclick="window.print()">طباعة الاستمارة الآن</button>
+  </div>
+
+  <div class="a4-wrapper">
+    <div class="a4-page">
+      <div class="page-border">
+        <div class="photo-box" id="p_photoBox">صورة الطالب</div>
+        <div class="form-content">
+          <div class="form-row">
+            <span class="label-title">اسم الطالب :</span>
+            <span class="label-value" id="p_name"></span>
+          </div>
+          <div class="form-row">
+            <span class="label-title">الصف والشعبة :</span>
+            <span class="label-value" id="p_academic"></span>
+          </div>
+          <div class="form-row">
+            <span class="label-title">العنوان :</span>
+            <span class="label-value" id="p_address"></span>
+          </div>
+          <div class="loss-container">
+            <div class="loss-title">نوع الفقدان :</div>
+            <div class="loss-options-grid">
+              <div class="loss-opt-item"><span class="check-box" id="chk_divorce"></span> طلاق</div>
+              <div class="loss-opt-item"><span class="check-box" id="chk_death"></span> وفاة</div>
+              <div class="loss-opt-item"><span class="check-box" id="chk_martyr"></span> استشهاد</div>
+              <div class="loss-opt-item"><span class="check-box" id="chk_other"></span> اخرى</div>
+            </div>
+          </div>
+          <div class="form-row">
+            <span class="label-title">الطالب يعيش مع :</span>
+            <span class="label-value" id="p_livesWith"></span>
+          </div>
+          <div class="form-row">
+            <span class="label-title">ولي امر الطالب :</span>
+            <span class="label-value" id="p_guardian"></span>
+          </div>
+          <div class="form-row">
+            <span class="label-title">مستوى الطالب العلمي قبل الفقدان :</span>
+            <span class="label-value" id="p_levelBefore"></span>
+          </div>
+          <div class="form-row">
+            <span class="label-title">مستوى الطالب العلمي بعد الفقدان :</span>
+            <span class="label-value" id="p_levelAfter"></span>
+          </div>
+          <div class="behavior-section">
+            <div class="behavior-title">سلوك الطالب ومواظبته :</div>
+            <textarea class="behavior-textarea" id="p_behavior" placeholder="اكتب الملاحظات هنا..."></textarea>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx5yjTs9uknjmgOr7tkvSoYWQ9IeBKTSqp42DVwd_2tssQqcFF7fzY1tnfbWy_faXFikg/exec";
+    let allStudents = [];
+    window.addEventListener('DOMContentLoaded', fetchStudents);
+
+    async function fetchStudents() {
+      const badge = document.getElementById('statusBadge');
+      badge.textContent = "جاري الجلب...";
+      try {
+        const res = await fetch(SCRIPT_URL);
+        const json = await res.json();
+        if (json.status === 'success') {
+          allStudents = json.data || [];
+          badge.textContent = `العدد: ${allStudents.length}`;
+          filterStudents();
+        } else {
+          badge.textContent = "خطأ في الجلب";
+        }
+      } catch (err) {
+        badge.textContent = "تعذر الاتصال";
+      }
+    }
+
+    function filterStudents() {
+      const search = document.getElementById('searchInput').value.trim().toLowerCase();
+      const dept = document.getElementById('filterDept').value;
+      const stage = document.getElementById('filterStage').value;
+      const section = document.getElementById('filterSection').value;
+
+      const filtered = allStudents.filter(st => {
+        const name = (st["اسم الطالبة الثلاثي"] || "").toLowerCase();
+        const matchName = name.includes(search);
+        const matchDept = !dept || st["القسم"] === dept;
+        const matchStage = !stage || st["المرحلة"] === stage;
+        const matchSec = !section || st["الشعبة"] === section;
+        return matchName && matchDept && matchStage && matchSec;
+      });
+
+      const select = document.getElementById('studentSelect');
+      select.innerHTML = `<option value="">-- اختر الطالبة (${filtered.length}) --</option>`;
+
+      filtered.forEach(st => {
+        const opt = document.createElement('option');
+        opt.value = st.id;
+        opt.textContent = `${st["اسم الطالبة الثلاثي"]} (${st["القسم"]} - ${st["المرحلة"]} / ${st["الشعبة"]})`;
+        select.appendChild(opt);
+      });
+
+      if (filtered.length === 1) {
+        select.value = filtered[0].id;
+        renderSelectedStudent();
+      }
+    }
+
+    function renderSelectedStudent() {
+      const selectedId = document.getElementById('studentSelect').value;
+      const st = allStudents.find(s => String(s.id) === String(selectedId));
+
+      ['chk_divorce', 'chk_death', 'chk_martyr', 'chk_other'].forEach(id => {
+        document.getElementById(id).textContent = "";
+      });
+
+      if (!st) return;
+
+      const photoBox = document.getElementById('p_photoBox');
+      const photoUrl = st["رابط الصورة الشخصية"];
+      if (photoUrl) {
+        photoBox.innerHTML = `<img src="${photoUrl}" alt="صورة الطالب" />`;
+      } else {
+        photoBox.innerHTML = `صورة الطالب`;
+      }
+
+      document.getElementById('p_name').textContent = st["اسم الطالبة الثلاثي"] || "";
+      document.getElementById('p_academic').textContent = `${st["القسم"] || ""} - المرحلة ${st["المرحلة"] || ""} - شعبة (${st["الشعبة"] || ""})`;
+      document.getElementById('p_address').textContent = st["العنوان الكامل"] || "";
+
+      let livesWithText = st["الطالبة تعيش مع"] || "";
+      if (livesWithText === "أخرى" && st["تفاصيل أخرى للسكن مع"]) {
+        livesWithText += ` (${st["تفاصيل أخرى للسكن مع"]})`;
+      }
+      document.getElementById('p_livesWith').textContent = livesWithText;
+
+      document.getElementById('p_guardian').textContent = `${st["اسم ولي الأمر"] || ""} (${st["صلة ولي الأمر بالطالبة"] || ""}) - هاتف: ${st["رقم موبايل ولي الأمر"] || ""}`;
+
+      document.getElementById('p_levelBefore').textContent = st["المستوى العلمي قبل الفقدان"] || "لا ينطبق";
+      document.getElementById('p_levelAfter').textContent = st["المستوى العلمي بعد الفقدان"] || "لا ينطبق";
+
+      const fAlive = st["هل الأب على قيد الحياة؟"];
+      const mAlive = st["هل الأم على قيد الحياة؟"];
+      const fReason = st["سبب وفاة الأب"] || "";
+      const mReason = st["سبب وفاة الأم"] || "";
+
+      if (fAlive === "لا" || mAlive === "لا") {
+        if (fReason === "استشهاد" || mReason === "استشهاد") {
+          document.getElementById('chk_martyr').textContent = "✓";
+        } else {
+          document.getElementById('chk_death').textContent = "✓";
+        }
+      } else if (livesWithText === "مع الأب" || livesWithText === "مع الأم") {
+        document.getElementById('chk_divorce').textContent = "✓";
+      } else if (livesWithText.startsWith("أخرى")) {
+        document.getElementById('chk_other').textContent = "✓";
+      }
+
+      const issues = st["المشاكل النفسية والسلوكية"];
+      let behaviorSummary = issues ? `الملاحظات المسجلة: ${issues}.\n` : "";
+      if (st["الأمراض المزمنة"] && st["الأمراض المزمنة"] !== "لا يوجد") {
+        behaviorSummary += `الحالة الصحية: ${st["الأمراض المزمنة"]}.`;
+      }
+      document.getElementById('p_behavior').value = behaviorSummary;
+    }
+  </script>
+</body>
+</html>

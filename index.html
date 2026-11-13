@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>استمارة الإرشاد التربوي | إعدادية الديوانية المهنية للبنات</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy: #1a2b4c;
+      --navy-light: #263d6b;
+      --gold: #c5a059;
+      --gold-light: #f4ebd9;
+      --bg: #f4f6f9;
+      --card: #ffffff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #cbd5e1;
+      --danger: #dc2626;
+      --success: #16a34a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; }
+    body { background-color: var(--bg); color: var(--text); line-height: 1.6; padding-bottom: 40px; }
+    header { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%); color: #fff; padding: 24px 16px 36px; text-align: center; border-bottom: 4px solid var(--gold); }
+    header .ministry { font-size: 0.85rem; color: var(--gold); font-weight: 700; }
+    header h1 { font-size: 1.45rem; font-weight: 800; margin: 6px 0 4px; }
+    .container { max-width: 760px; margin: -22px auto 0; padding: 0 14px; }
+    .progress-card { background: var(--card); border-radius: 14px; padding: 18px 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); margin-bottom: 18px; border: 1px solid rgba(197,160,89,0.25); }
+    .steps-labels { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.8rem; font-weight: 700; color: var(--muted); }
+    .steps-labels span.active { color: var(--navy); }
+    .steps-labels span.done { color: var(--gold); }
+    .progress-track { width: 100%; height: 8px; background: #e2e8f0; border-radius: 99px; overflow: hidden; }
+    .progress-fill { height: 100%; width: 25%; background: linear-gradient(90deg, var(--navy), var(--gold)); border-radius: 99px; transition: width 0.35s ease; }
+    .form-card { background: var(--card); border-radius: 16px; padding: 24px 20px; box-shadow: 0 8px 25px rgba(26,43,76,0.07); }
+    .step-section { display: none; }
+    .step-section.active { display: block; }
+    .step-title { font-size: 1.2rem; font-weight: 800; color: var(--navy); padding-bottom: 10px; margin-bottom: 20px; border-bottom: 2px solid var(--gold-light); display: flex; align-items: center; gap: 8px; }
+    .step-title span.badge { background: var(--gold); color: var(--navy); width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.95rem; }
+    .sub-heading { background: #f8fafc; border-right: 4px solid var(--gold); padding: 8px 12px; font-weight: 700; color: var(--navy); margin: 22px 0 14px; border-radius: 6px; font-size: 1rem; }
+    .grid-2 { display: grid; grid-template-columns: 1fr; gap: 14px; }
+    @media (min-width: 600px) { .grid-2 { grid-template-columns: 1fr 1fr; } .full-width { grid-column: span 2; } }
+    .form-group { margin-bottom: 14px; }
+    label { display: block; font-weight: 700; font-size: 0.92rem; margin-bottom: 6px; color: var(--navy); }
+    label .req { color: var(--danger); margin-right: 3px; }
+    input[type="text"], input[type="tel"], input[type="date"], input[type="number"], select, textarea { width: 100%; padding: 11px 13px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 0.95rem; color: var(--text); background: #fff; }
+    input:focus, select:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(197,160,89,0.2); }
+    .photo-upload-box { border: 2px dashed var(--gold); background: #fcfaf5; border-radius: 12px; padding: 16px; text-align: center; cursor: pointer; }
+    .photo-preview { width: 110px; height: 130px; object-fit: cover; border-radius: 8px; border: 2px solid var(--navy); margin: 10px auto 0; display: none; }
+    .conditional-box { display: none; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; margin-top: 8px; margin-bottom: 14px; }
+    .checkbox-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 10px; margin-top: 6px; }
+    .check-item { display: flex; align-items: center; gap: 8px; background: #f8fafc; border: 1px solid var(--border); padding: 9px 11px; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: 500; }
+    .pledge-box { background: var(--gold-light); border: 1.5px solid var(--gold); border-radius: 12px; padding: 15px; margin-top: 18px; display: flex; align-items: flex-start; gap: 10px; }
+    .pledge-box input { width: 20px; height: 20px; margin-top: 3px; accent-color: var(--navy); }
+    .nav-buttons { display: flex; justify-content: space-between; gap: 12px; margin-top: 26px; padding-top: 18px; border-top: 1px solid #e2e8f0; }
+    .btn { padding: 12px 24px; border-radius: 10px; font-size: 1rem; font-weight: 700; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+    .btn-prev { background: #e2e8f0; color: var(--navy); }
+    .btn-next { background: var(--navy); color: #fff; margin-right: auto; }
+    .btn-submit { background: linear-gradient(135deg, var(--gold) 0%, #b08942 100%); color: var(--navy); margin-right: auto; }
+    .overlay-screen { display: none; text-align: center; padding: 40px 20px; }
+    .overlay-screen.show { display: block; }
+    .success-icon { width: 72px; height: 72px; background: #dcfce7; color: var(--success); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 2.4rem; margin-bottom: 16px; }
+    .spinner { width: 44px; height: 44px; border: 4px solid #e2e8f0; border-top-color: var(--navy); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 14px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .error-msg { color: var(--danger); font-size: 0.85rem; margin-top: 6px; display: none; font-weight: 700; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="ministry">وزارة التربية / المديرية العامة للتعليم المهني</div>
+    <h1>إعدادية الديوانية المهنية للبنات</h1>
+    <p>الاستمارة الإلكترونية لوحدة الإرشاد التربوي والتوجيه النفسي</p>
+  </header>
+
+  <div class="container">
+    <div class="progress-card" id="progressCard">
+      <div class="steps-labels">
+        <span id="lbl-1" class="active">1. الشخصية</span>
+        <span id="lbl-2">2. العائلة</span>
+        <span id="lbl-3">3. السكن والصحة</span>
+        <span id="lbl-4">4. المستوى والتعهد</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <form id="guidanceForm" novalidate>
+
+        <!-- الخطوة 1 -->
+        <div class="step-section active" id="step-1">
+          <div class="step-title"><span class="badge">1</span> البيانات الشخصية والأكاديمية</div>
+          <div class="grid-2">
+            <div class="form-group full-width">
+              <label>اسم الطالبة الثلاثي <span class="req">*</span></label>
+              <input type="text" id="studentName" required placeholder="مثال: زينب علي حسين" />
+            </div>
+            
+            <div class="form-group">
+              <label>القسم المهني <span class="req">*</span></label>
+              <input type="text" id="department" required placeholder="مثال: أمن سيبراني / فنون / تجاري..." />
+            </div>
+
+            <div class="form-group">
+              <label>المرحلة الدراسية <span class="req">*</span></label>
+              <select id="stage" required>
+                <option value="">-- اختر المرحلة --</option>
+                <option value="الأولى">الأولى</option>
+                <option value="الثانية">الثانية</option>
+                <option value="الثالثة">الثالثة</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>الشعبة <span class="req">*</span></label>
+              <select id="section" required>
+                <option value="">-- اختر الشعبة --</option>
+                <option value="أ">أ</option>
+                <option value="ب">ب</option>
+                <option value="ج">ج</option>
+                <option value="د">د</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>تاريخ الولادة <span class="req">*</span></label>
+              <input type="date" id="dob" required />
+            </div>
+            <div class="form-group full-width">
+              <label>العنوان الكامل <span class="req">*</span></label>
+              <input type="text" id="address" required placeholder="الديوانية - الحي - قرب..." />
+            </div>
+            <div class="form-group full-width">
+              <label>الصورة الشخصية للطالبة <span class="req">*</span></label>
+              <div class="photo-upload-box" onclick="document.getElementById('photoInput').click()">
+                <div style="font-weight: 700; color: var(--navy);">اضغط هنا لرفع أو التقاط صورة شخصية</div>
+                <input type="file" id="photoInput" accept="image/*" style="display: none;" required />
+                <img id="photoPreview" class="photo-preview" alt="معاينة" />
+              </div>
+              <div class="error-msg" id="photoError">يرجى رفع الصورة الشخصية.</div>
+            </div>
+          </div>
+          <div class="nav-buttons">
+            <button type="button" class="btn btn-next" onclick="nextStep(1)">التالي &larr;</button>
+          </div>
+        </div>
+
+        <!-- الخطوة 2 -->
+        <div class="step-section" id="step-2">
+          <div class="step-title"><span class="badge">2</span> بيانات العائلة وولي الأمر</div>
+          <div class="sub-heading">بيانات الأب</div>
+          <div class="grid-2">
+            <div class="form-group"><label>اسم الأب الثلاثي <span class="req">*</span></label><input type="text" id="fatherName" required /></div>
+            <div class="form-group"><label>تحصيل الأب الدراسي <span class="req">*</span></label><input type="text" id="fatherEdu" required /></div>
+            <div class="form-group"><label>مهنة الأب ومكان عمله <span class="req">*</span></label><input type="text" id="fatherJob" required /></div>
+            <div class="form-group"><label>موبايل الأب</label><input type="tel" id="fatherPhone" placeholder="07XXXXXXXXX" /></div>
+            <div class="form-group full-width">
+              <label>هل الأب على قيد الحياة؟ <span class="req">*</span></label>
+              <select id="fatherAlive" required onchange="toggleConditional('fatherAlive', 'لا', 'fatherDeathBox')">
+                <option value="نعم">نعم</option>
+                <option value="لا">لا (متوفى)</option>
+              </select>
+            </div>
+          </div>
+          <div class="conditional-box" id="fatherDeathBox">
+            <div class="grid-2">
+              <div class="form-group"><label>سنة وفاة الأب</label><input type="number" id="fatherDeathYear" /></div>
+              <div class="form-group">
+                <label>سبب وفاة الأب</label>
+                <select id="fatherDeathReason">
+                  <option value="">-- اختر السبب --</option>
+                  <option value="وفاة طبيعية">وفاة طبيعية</option>
+                  <option value="استشهاد">استشهاد</option>
+                  <option value="مرض">مرض</option>
+                  <option value="حادث">حادث</option>
+                  <option value="أخرى">أخرى</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="sub-heading">بيانات الأم</div>
+          <div class="grid-2">
+            <div class="form-group"><label>اسم الأم الثلاثي <span class="req">*</span></label><input type="text" id="motherName" required /></div>
+            <div class="form-group"><label>تحصيل الأم الدراسي <span class="req">*</span></label><input type="text" id="motherEdu" required /></div>
+            <div class="form-group"><label>مهنة الأم ومكان عملها <span class="req">*</span></label><input type="text" id="motherJob" required /></div>
+            <div class="form-group"><label>موبايل الأم</label><input type="tel" id="motherPhone" placeholder="07XXXXXXXXX" /></div>
+            <div class="form-group full-width">
+              <label>هل الأم على قيد الحياة؟ <span class="req">*</span></label>
+              <select id="motherAlive" required onchange="toggleConditional('motherAlive', 'لا', 'motherDeathBox')">
+                <option value="نعم">نعم</option>
+                <option value="لا">لا (متوفاة)</option>
+              </select>
+            </div>
+          </div>
+          <div class="conditional-box" id="motherDeathBox">
+            <div class="grid-2">
+              <div class="form-group"><label>سنة وفاة الأم</label><input type="number" id="motherDeathYear" /></div>
+              <div class="form-group">
+                <label>سبب وفاة الأم</label>
+                <select id="motherDeathReason">
+                  <option value="">-- اختر السبب --</option>
+                  <option value="وفاة طبيعية">وفاة طبيعية</option>
+                  <option value="استشهاد">استشهاد</option>
+                  <option value="مرض">مرض</option>
+                  <option value="حادث">حادث</option>
+                  <option value="أخرى">أخرى</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="sub-heading">السكن وولي الأمر</div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label>الطالبة تعيش مع <span class="req">*</span></label>
+              <select id="livesWith" required onchange="toggleConditional('livesWith', 'أخرى', 'livesWithOtherBox')">
+                <option value="كلا الوالدين">كلا الوالدين</option>
+                <option value="مع الأب">مع الأب</option>
+                <option value="مع الأم">مع الأم</option>
+                <option value="أخرى">أخرى</option>
+              </select>
+            </div>
+            <div class="form-group" id="livesWithOtherBox" style="display: none;"><label>تفاصيل أخرى للسكن مع</label><input type="text" id="livesWithOther" /></div>
+            <div class="form-group"><label>اسم ولي الأمر <span class="req">*</span></label><input type="text" id="guardianName" required /></div>
+            <div class="form-group"><label>صلة ولي الأمر بالطالبة <span class="req">*</span></label><input type="text" id="guardianRelation" required /></div>
+            <div class="form-group"><label>رقم موبايل ولي الأمر <span class="req">*</span></label><input type="tel" id="guardianPhone" required /></div>
+          </div>
+
+          <div class="nav-buttons">
+            <button type="button" class="btn btn-prev" onclick="prevStep(2)">&rarr; السابق</button>
+            <button type="button" class="btn btn-next" onclick="nextStep(2)">التالي &larr;</button>
+          </div>
+        </div>
+
+        <!-- الخطوة 3 -->
+        <div class="step-section" id="step-3">
+          <div class="step-title"><span class="badge">3</span> الحالة السكنية والصحية والسلوكية</div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label>نوع السكن <span class="req">*</span></label>
+              <select id="housingType" required onchange="toggleConditional('housingType', 'أخرى', 'housingOtherBox')">
+                <option value="ملك">ملك</option>
+                <option value="إيجار">إيجار</option>
+                <option value="أخرى">أخرى</option>
+              </select>
+            </div>
+            <div class="form-group" id="housingOtherBox" style="display: none;"><label>تفاصيل نوع السكن (أخرى)</label><input type="text" id="housingOther" /></div>
+            <div class="form-group">
+              <label>هل الطالبة تعمل؟ <span class="req">*</span></label>
+              <select id="isWorking" required onchange="toggleConditional('isWorking', 'نعم', 'workPlaceBox')">
+                <option value="لا">لا</option>
+                <option value="نعم">نعم</option>
+              </select>
+            </div>
+            <div class="form-group" id="workPlaceBox" style="display: none;"><label>مكان عمل الطالبة</label><input type="text" id="workPlace" /></div>
+            <div class="form-group">
+              <label>هل الطالبة متزوجة؟ <span class="req">*</span></label>
+              <select id="isMarried" required onchange="toggleConditional('isMarried', 'نعم', 'husbandBox')">
+                <option value="لا">لا</option>
+                <option value="نعم">نعم</option>
+              </select>
+            </div>
+            <div class="form-group" id="husbandBox" style="display: none;"><label>اسم الزوج وعمله</label><input type="text" id="husbandInfo" /></div>
+          </div>
+
+          <div class="sub-heading">الحالة الصحية</div>
+          <div class="form-group">
+            <label>الأمراض المزمنة</label>
+            <div class="checkbox-grid" id="chronicGroup">
+              <label class="check-item"><input type="checkbox" value="لا يوجد" checked /> لا يوجد</label>
+              <label class="check-item"><input type="checkbox" value="سكر" class="disease-opt" /> سكر</label>
+              <label class="check-item"><input type="checkbox" value="ضغط" class="disease-opt" /> ضغط</label>
+              <label class="check-item"><input type="checkbox" value="قلب" class="disease-opt" /> قلب</label>
+              <label class="check-item"><input type="checkbox" value="صرع" class="disease-opt" /> صرع</label>
+              <label class="check-item"><input type="checkbox" value="أخرى" class="disease-opt" onchange="toggleOtherCheck(this, 'chronicOtherBox')" /> أخرى</label>
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="form-group" id="chronicOtherBox" style="display: none;"><label>تفاصيل مرض أخرى</label><input type="text" id="chronicOther" /></div>
+            <div class="form-group"><label>اسم الطبيب المراجع</label><input type="text" id="doctorName" /></div>
+          </div>
+
+          <div class="sub-heading">الحالة النفسية والسلوكية</div>
+          <div class="form-group">
+            <label>المشاكل النفسية والسلوكية</label>
+            <div class="checkbox-grid" id="behavioralGroup">
+              <label class="check-item"><input type="checkbox" value="خجل" /> خجل</label>
+              <label class="check-item"><input type="checkbox" value="انطواء" /> انطواء</label>
+              <label class="check-item"><input type="checkbox" value="قلق" /> قلق</label>
+              <label class="check-item"><input type="checkbox" value="مشاغبة" /> مشاغبة</label>
+              <label class="check-item"><input type="checkbox" value="خوف" /> خوف</label>
+            </div>
+          </div>
+
+          <div class="nav-buttons">
+            <button type="button" class="btn btn-prev" onclick="prevStep(3)">&rarr; السابق</button>
+            <button type="button" class="btn btn-next" onclick="nextStep(3)">التالي &larr;</button>
+          </div>
+        </div>
+
+        <!-- الخطوة 4 -->
+        <div class="step-section" id="step-4">
+          <div class="step-title"><span class="badge">4</span> المستوى الدراسي والتعهد</div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label>المستوى العلمي قبل الفقدان</label>
+              <select id="levelBeforeLoss">
+                <option value="لا ينطبق">لا ينطبق</option>
+                <option value="ممتاز">ممتاز</option>
+                <option value="جيد جداً">جيد جداً</option>
+                <option value="جيد">جيد</option>
+                <option value="متوسط">متوسط</option>
+                <option value="ضعيف">ضعيف</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>المستوى العلمي بعد الفقدان</label>
+              <select id="levelAfterLoss">
+                <option value="لا ينطبق">لا ينطبق</option>
+                <option value="ممتاز">ممتاز</option>
+                <option value="جيد جداً">جيد جداً</option>
+                <option value="جيد">جيد</option>
+                <option value="متوسط">متوسط</option>
+                <option value="ضعيف">ضعيف</option>
+              </select>
+            </div>
+            <div class="form-group"><label>عدد سنوات الرسوب <span class="req">*</span></label><input type="number" id="failYears" value="0" required /></div>
+            <div class="form-group"><label>الصفوف والمواد التي رسبت فيها</label><input type="text" id="failDetails" /></div>
+          </div>
+
+          <div class="sub-heading">المواهب</div>
+          <div class="form-group">
+            <div class="checkbox-grid" id="talentGroup">
+              <label class="check-item"><input type="checkbox" value="رياضية" /> رياضية</label>
+              <label class="check-item"><input type="checkbox" value="رسم" /> رسم</label>
+              <label class="check-item"><input type="checkbox" value="أخرى" onchange="toggleOtherCheck(this, 'talentOtherBox')" /> أخرى</label>
+            </div>
+          </div>
+          <div class="form-group" id="talentOtherBox" style="display: none;"><label>تفاصيل موهبة أخرى</label><input type="text" id="talentOther" /></div>
+
+          <div class="pledge-box">
+            <input type="checkbox" id="pledge" required />
+            <label for="pledge">التعهد بصحة المعلومات المذكورة.</label>
+          </div>
+
+          <div class="nav-buttons">
+            <button type="button" class="btn btn-prev" onclick="prevStep(4)">&rarr; السابق</button>
+            <button type="submit" class="btn btn-submit">إرسال الاستمارة ✓</button>
+          </div>
+        </div>
+
+      </form>
+
+      <div class="overlay-screen" id="loadingScreen">
+        <div class="spinner"></div>
+        <h3>جاري حفظ البيانات...</h3>
+      </div>
+      <div class="overlay-screen" id="successScreen">
+        <div class="success-icon">✓</div>
+        <h2>تم الإرسال بنجاح!</h2>
+        <button type="button" class="btn btn-next" onclick="location.reload()">استمارة جديدة</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx5yjTs9uknjmgOr7tkvSoYWQ9IeBKTSqp42DVwd_2tssQqcFF7fzY1tnfbWy_faXFikg/exec";
+    let compressedPhotoBase64 = "";
+
+    document.getElementById('photoInput').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          canvas.width = 400;
+          canvas.height = (img.height / img.width) * 400;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          compressedPhotoBase64 = canvas.toDataURL('image/jpeg', 0.8);
+          const preview = document.getElementById('photoPreview');
+          preview.src = compressedPhotoBase64;
+          preview.style.display = 'block';
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    function toggleConditional(id, val, boxId) {
+      document.getElementById(boxId).style.display = document.getElementById(id).value === val ? 'block' : 'none';
+    }
+    function toggleOtherCheck(cb, boxId) {
+      document.getElementById(boxId).style.display = cb.checked ? 'block' : 'none';
+    }
+
+    function nextStep(step) {
+      document.getElementById(`step-${step}`).classList.remove('active');
+      document.getElementById(`step-${step+1}`).classList.add('active');
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+    function prevStep(step) {
+      document.getElementById(`step-${step}`).classList.remove('active');
+      document.getElementById(`step-${step-1}`).classList.add('active');
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+
+    document.getElementById('guidanceForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const payload = {
+        studentName: document.getElementById('studentName').value,
+        department: document.getElementById('department').value.trim(),
+        stage: document.getElementById('stage').value,
+        section: document.getElementById('section').value,
+        dob: document.getElementById('dob').value,
+        address: document.getElementById('address').value,
+        photoBase64: compressedPhotoBase64,
+        fatherName: document.getElementById('fatherName').value,
+        fatherEdu: document.getElementById('fatherEdu').value,
+        fatherJob: document.getElementById('fatherJob').value,
+        fatherPhone: document.getElementById('fatherPhone').value,
+        fatherAlive: document.getElementById('fatherAlive').value,
+        fatherDeathYear: document.getElementById('fatherDeathYear').value,
+        fatherDeathReason: document.getElementById('fatherDeathReason').value,
+        motherName: document.getElementById('motherName').value,
+        motherEdu: document.getElementById('motherEdu').value,
+        motherJob: document.getElementById('motherJob').value,
+        motherPhone: document.getElementById('motherPhone').value,
+        motherAlive: document.getElementById('motherAlive').value,
+        motherDeathYear: document.getElementById('motherDeathYear').value,
+        motherDeathReason: document.getElementById('motherDeathReason').value,
+        livesWith: document.getElementById('livesWith').value,
+        livesWithOther: document.getElementById('livesWithOther').value,
+        guardianName: document.getElementById('guardianName').value,
+        guardianRelation: document.getElementById('guardianRelation').value,
+        guardianPhone: document.getElementById('guardianPhone').value,
+        housingType: document.getElementById('housingType').value,
+        housingOther: document.getElementById('housingOther').value,
+        isWorking: document.getElementById('isWorking').value,
+        workPlace: document.getElementById('workPlace').value,
+        isMarried: document.getElementById('isMarried').value,
+        husbandInfo: document.getElementById('husbandInfo').value,
+        chronicDiseases: Array.from(document.querySelectorAll('#chronicGroup input:checked')).map(cb => cb.value),
+        chronicOther: document.getElementById('chronicOther').value,
+        doctorName: document.getElementById('doctorName').value,
+        behavioralIssues: Array.from(document.querySelectorAll('#behavioralGroup input:checked')).map(cb => cb.value),
+        levelBeforeLoss: document.getElementById('levelBeforeLoss').value,
+        levelAfterLoss: document.getElementById('levelAfterLoss').value,
+        failYears: document.getElementById('failYears').value,
+        failDetails: document.getElementById('failDetails').value,
+        talents: Array.from(document.querySelectorAll('#talentGroup input:checked')).map(cb => cb.value),
+        talentOther: document.getElementById('talentOther').value,
+        pledge: document.getElementById('pledge').checked
+      };
+
+      document.getElementById('guidanceForm').style.display = 'none';
+      document.getElementById('progressCard').style.display = 'none';
+      document.getElementById('loadingScreen').classList.add('show');
+
+      try {
+        const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+        const result = await res.json();
+        document.getElementById('loadingScreen').classList.remove('show');
+        if (result.status === 'success') {
+          document.getElementById('successScreen').classList.add('show');
+        } else {
+          alert("خطأ: " + result.message);
+          location.reload();
+        }
+      } catch (err) {
+        alert("تعذر الاتصال بالخادم.");
+        location.reload();
+      }
+    });
+  </script>
+</body>
+</html>
