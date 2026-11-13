@@ -64,12 +64,12 @@
 
 <script>
 /* ===================== الإعدادات ===================== */
-const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxn87OFMukRig2GxqRJSCNjtt8gLjMpVDoLIYXp7uYbzk3li2VlngPbaMNoz_1U1X38xw/exec';
+const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby6b2UNFOXac-tlPhJAKhOFFXcheN8gsHeoobnwQprVvTvdFzsdZAxdk0FyQUzxQKil/exec';
 
-// عدّلي القائمة حسب أقسام المدرسة (تقدرين أيضاً تكتبين قسماً غير موجود بالقائمة)
-const DEPARTMENTS = ['الخياطة', 'التجميل', 'الحاسوب', 'التدبير المنزلي'];
-const STAGES = ['الأول', 'الثاني', 'الثالث'];
-const DIVS = ['أ', 'ب', 'ج', 'د', 'هـ', 'و'];
+// أقسام المدرسة (تقدرين أيضاً تكتبين قسماً غير موجود بالقائمة)
+const DEPARTMENTS = ['أمن سيبراني', 'أجهزة طبية', 'تجاري', 'صيانة حاسبات', 'فنون'];
+const STAGES = ['الأولى', 'الثانية', 'الثالثة'];
+const DIVS = ['أ', 'ب', 'ج', 'د'];
 const YN = ['نعم', 'لا'];
 
 /* ===================== تعريف الحقول (الأسماء = أسماء أعمدة الشيت) ===================== */
@@ -92,7 +92,7 @@ const STEPS = [
   { title: '١) بيانات الطالب', fields: [
     F('اسم الطالب الثلاثي', 'text', { req: 1 }),
     F('القسم', 'combo', { req: 1, options: DEPARTMENTS }),
-    F('الصف', 'select', { req: 1, options: STAGES }),
+    F('الصف', 'select', { req: 1, options: STAGES, label: 'الصف / المرحلة' }),
     F('الشعبة', 'select', { req: 1, options: DIVS }),
     F('تاريخ الولادة', 'date'),
     F('محافظة الولادة', 'text'),
